@@ -11,6 +11,10 @@ export class Seller {
   email: string;
   @Column()
   mdp: string;
+  @Column({})
+  image: string;
+  @Column({})
+  phoneNumber: number;
   @OneToMany((type) => Plant, (plant) => plant.seller)
   plants: Plant[];
 }

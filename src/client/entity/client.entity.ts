@@ -20,6 +20,10 @@ export class Client {
   email: string;
   @Column({})
   mdp: string;
+  @Column({})
+  image: string;
+  @Column({})
+  phoneNumber: number;
   @OneToMany((type) => Order, (Order) => Order.client)
   orders: Order[];
   @OneToMany((type) => Favoris, (Favoris) => Favoris.idClient)
