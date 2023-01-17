@@ -1,0 +1,32 @@
+import { Order } from 'src/order/entity/order.entity';
+import { Favoris } from 'src/favoris/entity/favoris.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+} from 'typeorm';
+import { Seller } from 'src/seller/entity/seller.entity';
+
+@Entity()
+export class Plant {
+  @PrimaryGeneratedColumn()
+  id: number;
+  @Column()
+  image: string;
+  @Column()
+  name: string;
+  @Column()
+  price: number;
+  @Column()
+  description: string;
+  @OneToMany((type) => Favoris, (Favoris) => Favoris.idPlant)
+  favoris: Favoris[];
+  @OneToMany((type) => Order, (Order) => Order.plant)
+  orders: Order[];
+  @ManyToOne((type) => Seller, (Seller) => Seller.plants)
+  @JoinColumn({name: 'seller',})
+  seller: Seller;
+}
