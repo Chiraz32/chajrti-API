@@ -25,7 +25,9 @@ export class Client {
   mdp: string;
   @Column({})
   salt: string;
-  @Column({})
+  @Column({
+    default : "default.png"
+  })
   image: string;
   @Column({})
   phoneNumber: number;

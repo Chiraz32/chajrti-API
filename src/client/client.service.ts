@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ClientInscritDto } from './dto/client-inscrit.dto';
@@ -8,10 +8,15 @@ import * as bcrypt from 'bcrypt';
 import { ConflictException, NotFoundException } from '@nestjs/common/exceptions';
 import { LoginCredetialsDto } from './dto/login-credentials.dto';
 import { JwtService } from '@nestjs/jwt';
+import { diskStorage } from 'multer';
+import path from 'path';
+import {v4 as uuidv4} from 'uuid';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 
 @Injectable()
 export class ClientService {
-
+    
     constructor(
         @InjectRepository(Client)
         private clientRepository : Repository<Client>,
@@ -65,6 +70,26 @@ export class ClientService {
         if(!newClient){
             throw new NotFoundException(`client ${id} n'existe pas`);
         }
+        return await this.clientRepository.save(newClient);
+    }
+    
+    @UseInterceptors(FileInterceptor('file',{
+        storage: diskStorage({
+            destination: './uploads/profileimages',
+            filename: (req, file, cb) => {
+                const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+                const extension: string = path.parse(file.originalname).ext;
+                cb(null, `${filename}${extension}`)
+                
+            }
+        })
+    }))
+    async updateImage(id: number, clientData: ClientUpdateDto, @UploadedFile() file) : Promise<Partial<Client>>{
+        const newClient = await this.clientRepository.preload({id, ...clientData});
+        if(!newClient){
+            throw new NotFoundException(`client ${id} n'existe pas`);
+        }
+        clientData.image = file.filename;
         return await this.clientRepository.save(newClient);
     }
 }

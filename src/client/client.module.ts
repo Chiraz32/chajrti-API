@@ -3,7 +3,6 @@ import { ClientService } from './client.service';
 import { ClientController } from './client.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client } from './entity/client.entity';
-import { Passport } from 'passport';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/passport-jwt.strategy';
