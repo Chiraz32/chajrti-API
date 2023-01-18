@@ -1,5 +1,5 @@
 import { Plant } from 'src/plant/entity/plant.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity()
 export class Seller {
@@ -8,9 +8,12 @@ export class Seller {
   @Column()
   surname: string;
   @Column()
+  @Unique('email', ['email']) // u
   email: string;
   @Column()
   mdp: string;
+  @Column({})
+  salt: string;
   @Column({})
   image: string;
   @Column({})
