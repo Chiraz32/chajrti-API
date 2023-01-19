@@ -23,16 +23,15 @@ export class Plant {
   @Column()
   description: string;
 
+
   @OneToMany((type) => Favoris, (Favoris) => Favoris.plant)
+
+  @OneToMany((type) => Favoris, (Favoris) => Favoris.plant,{cascade:true})
   favoris: Favoris[];
-
-  @OneToMany((type) => Order, (Order) => Order.plant)
+  @OneToMany((type) => Order, (Order) => Order.plant,{cascade:true})
   orders: Order[];
+  @ManyToOne((type) => Seller, (Seller) => Seller.plants,{cascade:true})
+  @JoinColumn({name: 'seller',})
 
-  @ManyToOne((type) => Seller, (Seller) => Seller.plants, {
-    cascade: ['insert', 'update'],
-    // eager: true
-  })
-  @JoinColumn({ name: 'seller' })
   seller: Seller;
 }
