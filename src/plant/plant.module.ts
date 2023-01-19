@@ -11,7 +11,7 @@ import { diskStorage } from 'multer';
   MulterModule.register({
     storage: diskStorage({
       destination: function (req, file, cb) {
-        cb(null, './files');
+        cb(null, './plantUploads');
       },
       filename: function (req, file, cb) {
         const name = file.originalname;
