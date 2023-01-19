@@ -6,6 +6,8 @@ import { Client } from './entity/client.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/passport-jwt.strategy';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 @Global()
 @Module({
   imports: [
@@ -16,7 +18,17 @@ import { JwtStrategy } from './strategy/passport-jwt.strategy';
       signOptions: {
         expiresIn: 3600
       }
-    })
+    }),
+    MulterModule.register({
+      storage: diskStorage({
+        destination: function (req, file, cb) {
+          cb(null, './files');
+        },
+        filename: function (req, file, cb) {
+          const name = file.originalname;
+          cb(null, `${name}`);
+        }
+    })}),
   ],
   providers: [ClientService, JwtStrategy],
   controllers: [ClientController]

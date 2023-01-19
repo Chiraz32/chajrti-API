@@ -26,6 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if(seller){
         delete seller.mdp;
         delete seller.salt;
+        return seller;
     }else{
         throw new UnauthorizedException();
     }

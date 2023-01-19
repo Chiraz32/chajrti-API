@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Seller } from './entity/seller.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import { JwtStrategy } from './strategy/passport-jwt.strategy';
 @Global()
 @Module({
@@ -16,9 +18,19 @@ import { JwtStrategy } from './strategy/passport-jwt.strategy';
       signOptions: {
         expiresIn: 3600
       }
-    })
+    }),
+    MulterModule.register({
+      storage: diskStorage({
+        destination: function (req, file, cb) {
+          cb(null, './files');
+        },
+        filename: function (req, file, cb) {
+          const name = file.originalname;
+          cb(null, `${name}`);
+        }
+    })}),
   ],
-  controllers: [SellerController, JwtStrategy],
+  controllers: [SellerController,JwtStrategy],
   providers: [SellerService]
 })
 export class SellerModule {}
