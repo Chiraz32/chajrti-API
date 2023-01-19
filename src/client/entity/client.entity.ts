@@ -8,7 +8,9 @@ import {
   OneToMany,
   PrimaryColumn,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
+import repository from 'typeorm/repository/Repository';
 
 @Entity()
 export class Client {
@@ -16,18 +18,23 @@ export class Client {
   id: number;
   @Column({})
   surname: string;
-  @PrimaryColumn({})
+  @Column()
+  @Unique('email', ['email']) // u
   email: string;
   @Column({})
   mdp: string;
   @Column({})
+  salt: string;
+  @Column({
+    default: 'default.png',
+  })
   image: string;
   @Column({})
   phoneNumber: number;
 
   @OneToMany((type) => Order, (Order) => Order.client)
   orders: Order[];
-  
+
   @OneToMany((type) => Favoris, (Favoris) => Favoris.client)
   favoris: Favoris[];
 }

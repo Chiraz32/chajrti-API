@@ -14,13 +14,13 @@ export class Favoris {
   id: number;
 
   @ManyToOne((type) => Client, (Client) => Client.favoris, {
-    cascade: true,
+   
     // nullable: true,
     // eager: true,
   })
   client: Client;
   @ManyToOne((type) => Plant, (Plant) => Plant.favoris, {
-    cascade: true,
+   
     // nullable:true,
     // eager: true,
   })

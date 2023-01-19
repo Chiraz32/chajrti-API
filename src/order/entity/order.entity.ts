@@ -23,13 +23,13 @@ export class Order {
   state: string;
 
   @ManyToOne((type) => Client, (Client) => Client.orders, {
-    cascade: true,
+    
     // eager: true,
   })
   client: Client;
   
   @ManyToOne((type) => Plant, (Plant) => Plant.orders, {
-    cascade: true,
+
     // eager: true,
   })
   plant: Plant;
