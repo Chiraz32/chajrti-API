@@ -24,8 +24,10 @@ export class Client {
   image: string;
   @Column({})
   phoneNumber: number;
+
   @OneToMany((type) => Order, (Order) => Order.client)
   orders: Order[];
-  @OneToMany((type) => Favoris, (Favoris) => Favoris.idClient)
+  
+  @OneToMany((type) => Favoris, (Favoris) => Favoris.client)
   favoris: Favoris[];
 }

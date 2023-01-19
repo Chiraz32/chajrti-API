@@ -22,11 +22,17 @@ export class Plant {
   price: number;
   @Column()
   description: string;
-  @OneToMany((type) => Favoris, (Favoris) => Favoris.idPlant)
+
+  @OneToMany((type) => Favoris, (Favoris) => Favoris.plant)
   favoris: Favoris[];
+
   @OneToMany((type) => Order, (Order) => Order.plant)
   orders: Order[];
-  @ManyToOne((type) => Seller, (Seller) => Seller.plants)
-  @JoinColumn({name: 'seller',})
+
+  @ManyToOne((type) => Seller, (Seller) => Seller.plants, {
+    cascade: ['insert', 'update'],
+    // eager: true
+  })
+  @JoinColumn({ name: 'seller' })
   seller: Seller;
 }
