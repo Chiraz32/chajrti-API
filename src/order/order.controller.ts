@@ -10,36 +10,36 @@ export class OrderController {
     
     constructor(private orderService: OrderService) {}
 
-    @Get('allByClient')
-    @UseGuards(JwtAuthGuard)
-    async getOrderByClient(@User()user): Promise<Order[]> {
-      return await this.orderService.getOrderByClient(user);
-    }
+    // @Get('allByClient')
+    // @UseGuards(JwtAuthGuard)
+    // async getOrderByClient(@User()user): Promise<Order[]> {
+    //   return await this.orderService.getOrderByClient(user);
+    // }
     @Get('all')
-    async getOrders(): Promise<Order[]> {
-      return await this.orderService.getOrders();
+    async getOrders(@User() user): Promise<Order[]> {
+      return await this.orderService.getOrders(user);
     }
-    @Get('allBySeller')
-    @UseGuards(JwtAuthGuard)
-    async getOrderBySeller(@User() user): Promise<Order[]> {
-      return await this.orderService.getOrderBySeller(user);
-    }
+    // @Get('allBySeller')
+    // @UseGuards(JwtAuthGuard)
+    // async getOrderBySeller(@User() user): Promise<Order[]> {
+    //   return await this.orderService.getOrderBySeller(user);
+    // }
   
     @Post('add')
-    async addOrder(@Body() Order: addOrderDto): Promise<Order> {
-      return await this.orderService.addOrder(Order);
+    async addOrder(@Body() Order: addOrderDto,@User() user): Promise<Order> {
+      return await this.orderService.addOrder(Order,user);
     }
   
     @Delete(':id')
-    async deleteOrder(@Param('id', ParseIntPipe) id: number) {
-      return this.orderService.deleteOrder(id);
+    async deleteOrder(@Param('id', ParseIntPipe) id: number,@User() user) {
+      return this.orderService.deleteOrder(id,user);
     }
     @Patch('accept/:id')
-    async acceptOrder(@Param('id', ParseIntPipe) id: number) {
-        return this.orderService.acceptOrder(id);
+    async acceptOrder(@Param('id', ParseIntPipe) id: number,@User() user) {
+        return this.orderService.acceptOrder(id,user);
       }
       @Patch('refuse/:id')
-      async refuseOrder(@Param('id', ParseIntPipe) id: number) {
-          return this.orderService.refuseOrder(id);
+      async refuseOrder(@Param('id', ParseIntPipe) id: number,@User() user) {
+          return this.orderService.refuseOrder(id,user);
         }
 }

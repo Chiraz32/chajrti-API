@@ -11,42 +11,45 @@ import { PlantService } from './plant.service';
 export class PlantController {
    constructor(private plantService: PlantService) { }
 
-   @Get('seller')
-   @UseGuards(JwtAuthGuard)
-   async getAllPlantsBySeller(@User() user): Promise<Plant[]> {
-      return await this.plantService.getAllPlantsbySeller(user);
-   }
+   // @Get('seller')
+   // @UseGuards(JwtAuthGuard)
+   // async getAllPlantsBySeller(@User() user): Promise<Plant[]> {
+   //    return await this.plantService.getAllPlantsbySeller(user);
+   // }
+
    @Get('all')
    @UseGuards(JwtAuthGuard)
-   async getAllPlants(): Promise<Plant[]> {
-      return await this.plantService.getAllPlants();
+   async getAllPlants(@User() user): Promise<Plant[]> {
+      return await this.plantService.getAllPlants(user);
    }
 
    @Get(':id')
-   async getById(@Param('id') id: number) {
-      return this.plantService.getById(id);
+   async getById(@Param('id') id: number, @User() user) {
+      return this.plantService.getById(id, user);
    }
 
    @Post('add')
    async addPlant(
       @Body() plant: addPlantDto,
-      ) {
-      await this.plantService.addPlant(plant);
+      @User() user
+   ) {
+      await this.plantService.addPlant(plant, user);
    }
 
    @Patch('upload/:id')
    @UseInterceptors(FileInterceptor('file'))
    async uploadFile(
-      @UploadedFile() file : Express.Multer.File,
-      @Param('id') id :number
-   ){
+      @UploadedFile() file: Express.Multer.File,
+      @Param('id') id: number,
+      @User() user
+   ) {
       console.log(file);
       const image = file.originalname;
-      await this.plantService.addImage(id,image);
+      await this.plantService.addImage(id, image, user);
    }
 
    @Delete(':id')
-   async deletePlant(@Param('id', ParseIntPipe) id: number) {
-      return this.plantService.deletePlant(id);
+   async deletePlant(@Param('id', ParseIntPipe) id: number, @User() user) {
+      return this.plantService.deletePlant(id, user);
    }
 }
