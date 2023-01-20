@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { ClientInscritDto } from './dto/client-inscrit.dto';
 import { ClientUpdateDto } from './dto/client-update.dto';
 import { Client } from './entity/client.entity';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt'
 import { ConflictException, NotFoundException } from '@nestjs/common/exceptions';
 import { LoginCredetialsDto } from './dto/login-credentials.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -43,7 +43,7 @@ export class ClientService {
         }
         return {
             id: client.id,
-            surname: client.surname,
+            name: client.name,
             email: client.email
         };
     }
@@ -61,7 +61,7 @@ export class ClientService {
         } else {
             const payload = {
                 id: client.id,
-                surname: client.surname,
+                name: client.name,
                 email: client.email
             };
             const jwt = await this.jwtService.sign(payload);

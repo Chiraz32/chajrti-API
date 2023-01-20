@@ -1,6 +1,7 @@
 import { Controller, Get, ParseIntPipe } from '@nestjs/common';
 import { Body, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { User } from 'src/decorators/client.decorator';
 import { ClientService } from './client.service';
 import { ClientInscritDto } from './dto/client-inscrit.dto';
 import { ClientUpdateDto } from './dto/client-update.dto';
@@ -14,6 +15,13 @@ export class ClientController {
     constructor(
         private clientService: ClientService
     ) { }
+   
+    @Get("get")
+    @UseGuards(JwtAuthGuard)
+    async findOne(@User() user: Client) {
+    console.log(user);
+}
+
 
     @Get('All')
     getAll(): Promise<Client[]> {

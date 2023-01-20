@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientService } from 'src/client/client.service';
+import { Client } from 'src/client/entity/client.entity';
 import { PlantService } from 'src/plant/plant.service';
 import { Repository } from 'typeorm';
 import { addFavorisDto } from './dto/addFavoris.dto';
@@ -13,8 +14,9 @@ export class FavorisService {
     private favorisRepository: Repository<Favoris>,
   ) {}
 
-  async getFavorisByClient(): Promise<Favoris[]> {
+  async getFavorisByClient(user : Client): Promise<Favoris[]> {
     return await this.favorisRepository.find({
+      where:{client:user},
       relations: {
         plant: true,
         client: true,

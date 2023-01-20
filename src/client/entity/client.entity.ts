@@ -1,6 +1,8 @@
 import { type } from 'os';
+import { UserRoleEnum } from 'src/enum/userRole.Enum';
 import { Favoris } from 'src/favoris/entity/favoris.entity';
 import { Order } from 'src/order/entity/order.entity';
+import { Plant } from 'src/plant/entity/plant.entity';
 import {
   Column,
   Entity,
@@ -17,7 +19,7 @@ export class Client {
   @PrimaryGeneratedColumn({})
   id: number;
   @Column({})
-  surname: string;
+  name: string;
   @Column()
   @Unique('email', ['email']) // u
   email: string;
@@ -31,10 +33,20 @@ export class Client {
   image: string;
   @Column({})
   phoneNumber: number;
-
-  @OneToMany((type) => Order, (Order) => Order.client)
+  
+  @Column({
+    type: 'enum',
+    enum: UserRoleEnum,
+    default: UserRoleEnum.Buyer,
+  })
+  role :string;
+  @OneToMany((type) => Order, (Order) => Order.client,{cascade:true})
   orders: Order[];
+ 
 
-  @OneToMany((type) => Favoris, (Favoris) => Favoris.client)
+  @OneToMany((type) => Favoris, (Favoris) => Favoris.client,{cascade:true})
   favoris: Favoris[];
+
+  @OneToMany( (type)=> Plant, plant=>plant.client ,{cascade:true})
+  plants :Plant[];
 }

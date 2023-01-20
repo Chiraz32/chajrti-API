@@ -1,4 +1,6 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/client/Guards/jwt-auth.guard';
+import { User } from 'src/decorators/client.decorator';
 import { addOrderDto } from './Dto/addOrder.dto';
 import { Order } from './entity/order.entity';
 import { OrderService } from './order.service';
@@ -8,9 +10,19 @@ export class OrderController {
     
     constructor(private orderService: OrderService) {}
 
+    @Get('allByClient')
+    @UseGuards(JwtAuthGuard)
+    async getOrderByClient(@User()user): Promise<Order[]> {
+      return await this.orderService.getOrderByClient(user);
+    }
     @Get('all')
-    async getOrderByClient(): Promise<Order[]> {
-      return await this.orderService.getOrderByClient();
+    async getOrders(): Promise<Order[]> {
+      return await this.orderService.getOrders();
+    }
+    @Get('allBySeller')
+    @UseGuards(JwtAuthGuard)
+    async getOrderBySeller(@User() user): Promise<Order[]> {
+      return await this.orderService.getOrderBySeller(user);
     }
   
     @Post('add')

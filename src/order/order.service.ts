@@ -1,19 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Client } from 'src/client/entity/client.entity';
 import { OrderStateEnum } from 'src/enum/orderState.enum';
+import { Plant } from 'src/plant/entity/plant.entity';
+import { PlantService } from 'src/plant/plant.service';
 import { Repository } from 'typeorm';
 import { addOrderDto } from './Dto/addOrder.dto';
 import { Order } from './entity/order.entity';
 
 @Injectable()
 export class OrderService {
+  plantService :PlantService;
   constructor(
     @InjectRepository(Order)
     private OrderRepository: Repository<Order>,
   ) {}
 
-  async getOrderByClient(): Promise<Order[]> {
+  async getOrderByClient(user :Client): Promise<Order[]> {
     return await this.OrderRepository.find({
+      where:{ client:user},
+      relations: {
+        plant: true,
+        client: true,
+      },
+    });
+  }
+
+  async getOrders(): Promise<Order[]> {
+    return await this.OrderRepository.find({
+      relations: {
+        plant: true,
+        client: true,
+      },
+    });
+  }
+  // it's not working
+  async getOrderBySeller(user :Client): Promise<Order[]> {
+    console.log(user);
+   const plants = await this.plantService.getAllPlantsbySeller(user);
+   console.log(plants);
+     return await this.OrderRepository.find({
+      where:{ plant :plants},
       relations: {
         plant: true,
         client: true,

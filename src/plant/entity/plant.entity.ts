@@ -8,7 +8,9 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
 } from 'typeorm';
-import { Seller } from 'src/seller/entity/seller.entity';
+
+import { Client } from 'src/client/entity/client.entity';
+import { ClientService } from 'src/client/client.service';
 
 @Entity()
 export class Plant {
@@ -30,8 +32,8 @@ export class Plant {
   favoris: Favoris[];
   @OneToMany((type) => Order, (Order) => Order.plant,{cascade:true})
   orders: Order[];
-  @ManyToOne((type) => Seller, (Seller) => Seller.plants,{cascade:true})
-  @JoinColumn({name: 'seller',})
-
-  seller: Seller;
+ 
+  @ManyToOne((type)=>Client,client=> client.plants)
+  client : Client;
+ 
 }

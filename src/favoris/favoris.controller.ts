@@ -6,8 +6,11 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { get } from 'http';
+import { JwtAuthGuard } from 'src/client/Guards/jwt-auth.guard';
+import { User } from 'src/decorators/client.decorator';
 import { DeleteDateColumn } from 'typeorm';
 import { addFavorisDto } from './dto/addFavoris.dto';
 import { Favoris } from './entity/favoris.entity';
@@ -18,8 +21,9 @@ export class FavorisController {
   constructor(private favorisService: FavorisService) {}
 
   @Get('all')
-  async getFavorisByClient(): Promise<Favoris[]> {
-    return await this.favorisService.getFavorisByClient();
+  @UseGuards(JwtAuthGuard)
+  async getFavorisByClient( @User() user): Promise<Favoris[]> {
+    return await this.favorisService.getFavorisByClient(user);
   }
 
   @Post('add')
