@@ -8,10 +8,8 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { get } from 'http';
 import { JwtAuthGuard } from 'src/client/Guards/jwt-auth.guard';
 import { User } from 'src/decorators/client.decorator';
-import { DeleteDateColumn } from 'typeorm';
 import { addFavorisDto } from './dto/addFavoris.dto';
 import { Favoris } from './entity/favoris.entity';
 import { FavorisService } from './favoris.service';
@@ -27,12 +25,18 @@ export class FavorisController {
   }
 
   @Post('add')
-  async addFavoris(@Body() favoris: addFavorisDto): Promise<Favoris> {
-    return await this.favorisService.addFavoris(favoris);
+  async addFavoris(
+    @Body() favoris: addFavorisDto,
+    @User() user,
+  ): Promise<Favoris> {
+    return await this.favorisService.addFavoris(favoris, user);
   }
 
   @Delete(':id')
-  async deleteFavoris(@Param('id', ParseIntPipe) id: number) {
-    return this.favorisService.deleteFavoris(id);
+  async deleteFavoris(
+    @Param('id', ParseIntPipe) id: number,
+    @User() user,
+  ) {
+    return this.favorisService.deleteFavoris(id, user);
   }
 }
