@@ -6,9 +6,10 @@ import { ClientInscritDto } from './dto/client-inscrit.dto';
 import { ClientUpdateDto } from './dto/client-update.dto';
 import { Client } from './entity/client.entity';
 import * as bcrypt from 'bcrypt'
-import { ConflictException, NotFoundException } from '@nestjs/common/exceptions';
+import { ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { LoginCredetialsDto } from './dto/login-credentials.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UserRoleEnum } from 'src/enum/userRole.Enum';
 
 @Injectable()
 export class ClientService {
@@ -19,17 +20,25 @@ export class ClientService {
         private jwtService: JwtService
     ) { }
 
-    async getAll(): Promise<Client[]> {
-        return await this.clientRepository.find();
+    async getAll(user:Client): Promise<Client[]> {
+        if(user.role === UserRoleEnum.Admin){
+            return await this.clientRepository.find();
+        }
+        return await [user];
     }
 
-    async getById(id: number): Promise<Client> {
-        const client = await this.clientRepository.createQueryBuilder('client')
+    async getById(id: number, user : Client): Promise<Client> {
+        
+        if(user.role === UserRoleEnum.Admin || user.id == id){
+            const client = await this.clientRepository.createQueryBuilder('client')
             .where('client.id = :id', { id }).getOne();
-        if (!client) {
-            throw new NotFoundException(`client ${id} n'existe pas`);
+            if (!client) {
+                throw new NotFoundException(`client ${id} n'existe pas`);
+            }
+            return client;
+        }else{
+            throw new UnauthorizedException(`You can't see this info`);
         }
-        return client;
     }
 
     async inscrit(clientData: ClientInscritDto): Promise<Partial<Client>> {
@@ -71,20 +80,29 @@ export class ClientService {
         }
     }
 
-    async update(id: number, clientData: ClientUpdateDto): Promise<Partial<Client>> {
-        const newClient = await this.clientRepository.preload({
-            id, ...clientData
-        })
-        if (!newClient) {
-            throw new NotFoundException(`client ${id} n'existe pas`);
+    async update(id: number, clientData: ClientUpdateDto, user : Client): Promise<Partial<Client>> {
+        if(user.role === UserRoleEnum.Admin || user.id == id){
+            const newClient = await this.clientRepository.preload({
+                id, ...clientData
+            })
+            if (!newClient) {
+                throw new NotFoundException(`client ${id} n'existe pas`);
+            }
+            return await this.clientRepository.save(newClient);
+        }else{
+            throw new UnauthorizedException(`You can't update those infos`)
         }
-        return await this.clientRepository.save(newClient);
+        
     }
 
-    async updateImage(id: number, image: string) {
-        const newClient = await this.getById(id);
-        newClient.image = image;
-        return await this.clientRepository.save(newClient);
+    async updateImage(id: number, image: string, user : Client) {
+        if(user.role === UserRoleEnum.Admin || user.id == id){
+            const newClient = await this.getById(id, user);
+            newClient.image = image;
+            return await this.clientRepository.save(newClient);
+        }else{
+            throw new UnauthorizedException(`You can't update this image`);
+        }
     }
 
 }

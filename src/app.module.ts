@@ -5,7 +5,6 @@ import { PlantModule } from './plant/plant.module';
 import { OrderModule } from './order/order.module';
 import { FavorisModule } from './favoris/favoris.module';
 import { ClientModule } from './client/client.module';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -18,10 +17,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: '127.0.0.1',
-      port: 3307,
+      port: 3306,
       username: 'root',
       password: '',
-      database: 'chajrti',
+      database: 'chajarti',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),

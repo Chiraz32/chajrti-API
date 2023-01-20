@@ -1,6 +1,7 @@
 import { Controller, Get, ParseIntPipe } from '@nestjs/common';
 import { Body, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { userInfo } from 'os';
 import { User } from 'src/decorators/client.decorator';
 import { ClientService } from './client.service';
 import { ClientInscritDto } from './dto/client-inscrit.dto';
@@ -16,39 +17,36 @@ export class ClientController {
         private clientService: ClientService
     ) { }
    
-    @Get("get")
     @UseGuards(JwtAuthGuard)
-    async findOne(@User() user: Client) {
-    console.log(user);
-}
-
-
-    @Get('All')
-    getAll(): Promise<Client[]> {
-        return this.clientService.getAll();
+    @Get('all')
+    async getAll(
+        @User() client
+    ): Promise<Client[]> {
+        return await this.clientService.getAll(client);
     }
 
     @Post('inscrit')
-    inscrit(
+    async inscrit(
         @Body() clientData: ClientInscritDto
     ): Promise<Partial<Client>> {
-        return this.clientService.inscrit(clientData);
+        return await this.clientService.inscrit(clientData);
     }
 
     @Post('login')
-    login(
+    async login(
         @Body() Credentials: LoginCredetialsDto
     ) {
-        return this.clientService.login(Credentials);
+        return await this.clientService.login(Credentials);
     }
 
     @UseGuards(JwtAuthGuard)
     @Patch('update/:id')
-    update(
+    async update(
         @Body() clientData: ClientUpdateDto,
+        @User() user,
         @Param('id', ParseIntPipe) id: number
     ) {
-        return this.clientService.update(id, clientData);
+        return await this.clientService.update(id, clientData, user);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -56,12 +54,22 @@ export class ClientController {
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(
         @UploadedFile() file: Express.Multer.File,
+        @User() user,
         @Param('id', ParseIntPipe) id: number
     ) {
         console.log(file);
         const image = file.originalname;
-        return await this.clientService.updateImage(id, image);
+        return await this.clientService.updateImage(id, image, user);
     }
 
+
+    @Get(":id")
+    @UseGuards(JwtAuthGuard)
+    async findOne(
+        @User() user,
+        @Param('id', ParseIntPipe) id: number
+    ) {
+        return await this.clientService.getById(id, user);
+    }
 }
 
