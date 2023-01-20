@@ -33,20 +33,20 @@ export class Client {
   image: string;
   @Column({})
   phoneNumber: number;
-  
+
   @Column({
     type: 'enum',
     enum: UserRoleEnum,
     default: UserRoleEnum.Buyer,
   })
-  role :string;
-  @OneToMany((type) => Order, (Order) => Order.client,{cascade:true})
+  role: string;
+  @OneToMany((type) => Order, (Order) => Order.client, { cascade: true })
   orders: Order[];
- 
 
-  @OneToMany((type) => Favoris, (Favoris) => Favoris.client,{cascade:true})
+
+  @OneToMany((type) => Favoris, (Favoris) => Favoris.client, { cascade: true })
   favoris: Favoris[];
 
-  @OneToMany( (type)=> Plant, plant=>plant.client ,{cascade:true})
-  plants :Plant[];
+  @OneToMany((type) => Plant, plant => plant.client, { cascade: true })
+  plants: Plant[];
 }
