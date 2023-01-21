@@ -6,6 +6,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -32,5 +33,6 @@ export class Order {
 
     // eager: true,
   })
+  @JoinTable()
   plant: Plant;
 }

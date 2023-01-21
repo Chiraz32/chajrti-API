@@ -40,7 +40,9 @@ export class PlantService {
         );
         if (!plant)
             throw new NotFoundException();
-        if (user.role === UserRoleEnum.Admin || user.role === UserRoleEnum.Buyer || (user.role === UserRoleEnum.Seller && (await plant).client.id === user.id)) { return plant; }
+        if (user.role === UserRoleEnum.Admin || user.role === UserRoleEnum.Buyer ||
+             (user.role === UserRoleEnum.Seller && (await plant).client.id === user.id)) 
+        { return plant; }
         else {
             throw new UnauthorizedException();
         }
@@ -48,8 +50,9 @@ export class PlantService {
     }
 
     async addPlant(plant: addPlantDto, user: Client): Promise<Plant> {
-        if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Seller && user.id === plant.client.id)) {
+        if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Seller)) {
             const newPlant = this.plantRepository.create(plant);
+            if (user.role === UserRoleEnum.Seller) newPlant.client=user;
             return await this.plantRepository.save(newPlant);
         }
         else {
@@ -58,8 +61,13 @@ export class PlantService {
     }
 
     async addImage(id: number, image: string, user: Client): Promise<Plant> {
-        const newPlant = await this.getById(id, user);
-        if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Seller && newPlant.client.id === user.id)) {
+        console.log("thisid "+ id);
+        console.log("thisUser "+ user);
+        const newPlant = await this.plantRepository.findOne({where:{id:id}});
+        console.log(newPlant);
+        const client = newPlant.client;
+        if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Seller 
+            && client.id === user.id)) {
             newPlant.image = image;
             return await this.plantRepository.save(newPlant);
         }
@@ -69,12 +77,14 @@ export class PlantService {
     }
 
     async deletePlant(id: number, user: Client) {
+        console.log("this is user " +user)
         const toDelete = await this.plantRepository.findOne({
             where: { id: id },
         });
+        const client =toDelete.client;
         if (!toDelete) {
             throw new NotFoundException(`This plant doesn't exist`);
-        } else if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Seller && (toDelete.client.id === user.id))) {
+        } else if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Seller && (client.id === user.id))) {
             return await this.plantRepository.delete(id);
         } else {
             throw new UnauthorizedException();

@@ -15,7 +15,11 @@ export class OrderService {
   constructor(
     @InjectRepository(Order)
     private OrderRepository: Repository<Order>,
-  ) { }
+    @InjectRepository(Plant)
+    private PlantRepository: Repository<Plant>,
+  ) { 
+    this.plantService= new PlantService(PlantRepository);
+  }
 
   // async getOrderByClient(user: Client): Promise<Order[]> {
   //   return await this.OrderRepository.find({
@@ -28,6 +32,7 @@ export class OrderService {
   // }
 
   async getOrders(user: Client): Promise<Order[]> {
+    console.log(user);
     if (user.role === UserRoleEnum.Admin) {
       return await this.OrderRepository.find({
         relations: {
@@ -47,15 +52,20 @@ export class OrderService {
     }
     else {
       const plants = await this.plantService.getAllPlants(user);
-      plants.forEach(async plant => {
-        return await this.OrderRepository.find({
+     
+      var orders= [];
+      for(const plant of plants) {
+        console.log(plant);
+        orders.push(await this.OrderRepository.find({
           where: { plant: plant },
           relations: {
             plant: true,
             client: true,
           },
-        });
-      });
+        }));
+      };
+      console.log(orders);
+      return orders ;
     }
   }
   // it's not working

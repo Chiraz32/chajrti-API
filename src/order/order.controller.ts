@@ -16,7 +16,9 @@ export class OrderController {
     //   return await this.orderService.getOrderByClient(user);
     // }
     @Get('all')
-    async getOrders(@User() user): Promise<Order[]> {
+    @UseGuards(JwtAuthGuard)
+    async getOrders(@User() user): Promise<Order[]> 
+    {
       return await this.orderService.getOrders(user);
     }
     // @Get('allBySeller')
@@ -26,19 +28,23 @@ export class OrderController {
     // }
   
     @Post('add')
+    @UseGuards(JwtAuthGuard)
     async addOrder(@Body() Order: addOrderDto,@User() user): Promise<Order> {
       return await this.orderService.addOrder(Order,user);
     }
   
     @Delete(':id')
+     @UseGuards(JwtAuthGuard)
     async deleteOrder(@Param('id', ParseIntPipe) id: number,@User() user) {
       return this.orderService.deleteOrder(id,user);
     }
     @Patch('accept/:id')
+    @UseGuards(JwtAuthGuard)
     async acceptOrder(@Param('id', ParseIntPipe) id: number,@User() user) {
         return this.orderService.acceptOrder(id,user);
       }
       @Patch('refuse/:id')
+       @UseGuards(JwtAuthGuard)
       async refuseOrder(@Param('id', ParseIntPipe) id: number,@User() user) {
           return this.orderService.refuseOrder(id,user);
         }

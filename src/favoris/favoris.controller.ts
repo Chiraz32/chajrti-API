@@ -25,6 +25,7 @@ export class FavorisController {
   }
 
   @Post('add')
+  @UseGuards(JwtAuthGuard)
   async addFavoris(
     @Body() favoris: addFavorisDto,
     @User() user,
@@ -33,6 +34,7 @@ export class FavorisController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deleteFavoris(
     @Param('id', ParseIntPipe) id: number,
     @User() user,

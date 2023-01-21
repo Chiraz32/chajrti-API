@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotFoundError } from 'rxjs';
 import { Client } from 'src/client/entity/client.entity';
@@ -12,20 +16,29 @@ export class FavorisService {
   constructor(
     @InjectRepository(Favoris)
     private favorisRepository: Repository<Favoris>,
-  ) { }
+  ) {}
 
   async getFavorisByClient(user: Client): Promise<Favoris[]> {
-    return await this.favorisRepository.find({
-      where: { client: user },
-      relations: {
-        plant: true,
-        client: true,
-      },
-    });
+    if (user.role === UserRoleEnum.Buyer)
+      return await this.favorisRepository.find({
+        where: { client: user },
+        relations: {
+          plant: true,
+          client: true,
+        },
+      });
+    else if (user.role === UserRoleEnum.Admin) {
+      return await this.favorisRepository.find();
+    } else {
+      throw new UnauthorizedException(`You can't see favoris list`);
+    }
   }
 
   async addFavoris(favoris: addFavorisDto, user: Client): Promise<Favoris> {
-    if ((user.role === UserRoleEnum.Buyer && favoris.client.id === user.id) || user.role === UserRoleEnum.Admin) {
+    if (
+      (user.role === UserRoleEnum.Buyer && favoris.client.id === user.id) ||
+      user.role === UserRoleEnum.Admin
+    ) {
       const newFavoris = this.favorisRepository.create(favoris);
       await this.favorisRepository.save(newFavoris);
       return newFavoris;
@@ -45,7 +58,10 @@ export class FavorisService {
     if (!toDelete) {
       throw new NotFoundException(`This favoris doesn't exist`);
     } else {
-      if ((user.role === UserRoleEnum.Buyer && toDelete.client.id === user.id) || user.role === UserRoleEnum.Admin) {
+      if (
+        (user.role === UserRoleEnum.Buyer && toDelete.client.id === user.id) ||
+        user.role === UserRoleEnum.Admin
+      ) {
         return await this.favorisRepository.delete(id);
       } else {
         throw new UnauthorizedException(`You can't delete this favoris`);
