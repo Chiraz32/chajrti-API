@@ -4,8 +4,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { NotFoundError } from 'rxjs';
-import { Client } from 'src/client/entity/client.entity';
 import { UserRoleEnum } from 'src/enum/userRole.Enum';
 import { Repository } from 'typeorm';
 import { addFavorisDto } from './dto/addFavoris.dto';
@@ -42,7 +40,6 @@ export class FavorisService {
   }
 
   async addFavoris(favoris: addFavorisDto, user): Promise<Favoris> {
-    const newFavoris = this.favorisRepository.create(favoris);
     if (
       (user.role === UserRoleEnum.Buyer ) ||
       user.role === UserRoleEnum.Admin
