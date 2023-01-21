@@ -30,8 +30,8 @@ export class Order {
   client: Client;
   
   @ManyToOne((type) => Plant, (Plant) => Plant.orders, {
-
-    // eager: true,
+     
+     eager: true,
   })
   @JoinTable()
   plant: Plant;

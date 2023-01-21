@@ -27,10 +27,10 @@ export class OrderController {
     //   return await this.orderService.getOrderBySeller(user);
     // }
   
-    @Post('add')
+    @Post('add/:addOrderDto')
     @UseGuards(JwtAuthGuard)
-    async addOrder(@Param('id', ParseIntPipe) id: number,@User() user): Promise<Order> {
-      return await this.orderService.addOrder(id,user);
+    async addOrder(@Param()addOrderDto:addOrderDto,@User() user): Promise<Order> {
+      return await this.orderService.addOrder(addOrderDto,user);
 
     }
   

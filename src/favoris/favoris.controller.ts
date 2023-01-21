@@ -14,6 +14,7 @@ import { addFavorisDto } from './dto/addFavoris.dto';
 import { Favoris } from './entity/favoris.entity';
 import { FavorisService } from './favoris.service';
 
+
 @Controller('favoris')
 export class FavorisController {
   constructor(private favorisService: FavorisService) {}

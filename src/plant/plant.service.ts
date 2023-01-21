@@ -14,31 +14,25 @@ export class PlantService {
     constructor(
         @InjectRepository(Plant)
         private plantRepository: Repository<Plant>) { }
-    private
-    // async getAllPlantsbySeller(user: Client): Promise<Plant[]> {
-    //     return await this.plantRepository.find(
-    //         {
-    //             where: { client: user }
-
-    //         }
-    //     )
-    //         ;
-    // }
-    async getAllPlants(user: Client): Promise<Plant[]> {
-        if (user.role === UserRoleEnum.Buyer || user.role === UserRoleEnum.Admin) { return await this.plantRepository.find(); }
+   
+    async getAllPlants(user): Promise<Plant[]> {
+        if (user.role === UserRoleEnum.Buyer || user.role === UserRoleEnum.Admin) 
+        { return await this.plantRepository.find(); }
         else {
+           
             return await this.plantRepository.find(
                 {
-                    where: { client : user }
+                   where: { 
+                     client: user 
+                  },
+                   relations: {
+                    client: true,
+                }
                 }
             );
         }
     }
-    async findBYid(id:number) : Promise <Plant> {
-       return this.plantRepository.findOne(
-            { where: { id: id } });
-    }
-
+  
     async getById(id: number, user: Client) {
         const plant = this.plantRepository.findOne(
             {
@@ -59,11 +53,12 @@ export class PlantService {
 
     }
 
-    async addPlant(plant: addPlantDto, user: Client): Promise<Plant> {
+    async addPlant(plant: addPlantDto, user): Promise<Plant> {
         if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Seller)) {
 
             const newPlant = this.plantRepository.create(plant);
             if (user.role === UserRoleEnum.Seller) newPlant.client=user;
+
             return await this.plantRepository.save(newPlant);
         }
         else {
@@ -71,7 +66,7 @@ export class PlantService {
         }
     }
 
-    async addImage(id: number, image: string, user: Client): Promise<Plant> {
+    async addImage(id: number, image: string, user): Promise<Plant> {
         console.log("thisid "+ id);
         console.log("thisUser "+ user);
         const newPlant = await this.plantRepository.findOne({where:{id:id}});
@@ -87,7 +82,7 @@ export class PlantService {
         }
     }
 
-    async deletePlant(id: number, user: Client) {
+    async deletePlant(id: number, user) {
         console.log("this is user " +user)
         const toDelete = await this.plantRepository.findOne({
             where: { id: id }, relations: {

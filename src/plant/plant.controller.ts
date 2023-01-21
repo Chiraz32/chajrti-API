@@ -20,13 +20,13 @@ export class PlantController {
 
    @Get('all')
    @UseGuards(JwtAuthGuard)
-   async getAllPlants(@User() user): Promise<Plant[]> {
+   async getAllPlants(@User() user:Client): Promise<Plant[]> {
       return await this.plantService.getAllPlants(user);
    }
 
    @Get(':id')
    @UseGuards(JwtAuthGuard)
-   async getById(@Param('id', ParseIntPipe) id: number, @User() user) {
+   async getById(@Param('id', ParseIntPipe) id: number, @User() user:Client) {
       return this.plantService.getById(id, user);
    }
 
