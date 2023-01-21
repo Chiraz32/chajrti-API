@@ -29,8 +29,8 @@ export class OrderController {
   
     @Post('add')
     @UseGuards(JwtAuthGuard)
-    async addOrder(@Body() Order: addOrderDto,@User() user): Promise<Order> {
-      return await this.orderService.addOrder(Order,user);
+    async addOrder(@Param('id', ParseIntPipe) id: number,@User() user): Promise<Order> {
+      return await this.orderService.addOrder(id,user);
     }
   
     @Delete(':id')

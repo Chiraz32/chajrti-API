@@ -35,4 +35,5 @@ export class Order {
   })
   @JoinTable()
   plant: Plant;
+  newOrder: Promise<Plant>;
 }

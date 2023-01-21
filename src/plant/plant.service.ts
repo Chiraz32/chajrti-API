@@ -28,10 +28,14 @@ export class PlantService {
         else {
             return await this.plantRepository.find(
                 {
-                    where: { client: user }
+                    where: { client : user }
                 }
             );
         }
+    }
+    async findBYid(id:number) : Promise <Plant> {
+       return this.plantRepository.findOne(
+            { where: { id: id } });
     }
 
     async getById(id: number, user: Client) {
