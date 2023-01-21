@@ -5,7 +5,6 @@ import { PlantModule } from './plant/plant.module';
 import { OrderModule } from './order/order.module';
 import { FavorisModule } from './favoris/favoris.module';
 import { ClientModule } from './client/client.module';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -14,7 +13,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     OrderModule,
     FavorisModule,
     ClientModule,
-
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: '127.0.0.1',

@@ -25,7 +25,7 @@ export class OrderController {
     //   return await this.orderService.getOrderBySeller(user);
     // }
   
-    @Post('add')
+    @Post(':id')
     async addOrder(@Body() Order: addOrderDto,@User() user): Promise<Order> {
       return await this.orderService.addOrder(Order,user);
     }

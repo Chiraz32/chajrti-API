@@ -24,11 +24,13 @@ export class PlantController {
    }
 
    @Get(':id')
-   async getById(@Param('id') id: number, @User() user) {
+   @UseGuards(JwtAuthGuard)
+   async getById(@Param('id', ParseIntPipe) id: number, @User() user) {
       return this.plantService.getById(id, user);
    }
 
    @Post('add')
+   @UseGuards(JwtAuthGuard)
    async addPlant(
       @Body() plant: addPlantDto,
       @User() user
@@ -37,6 +39,7 @@ export class PlantController {
    }
 
    @Patch('upload/:id')
+   @UseGuards(JwtAuthGuard)
    @UseInterceptors(FileInterceptor('file'))
    async uploadFile(
       @UploadedFile() file: Express.Multer.File,
@@ -49,6 +52,7 @@ export class PlantController {
    }
 
    @Delete(':id')
+   @UseGuards(JwtAuthGuard)
    async deletePlant(@Param('id', ParseIntPipe) id: number, @User() user) {
       return this.plantService.deletePlant(id, user);
    }
