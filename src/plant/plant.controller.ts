@@ -58,6 +58,7 @@ export class PlantController {
    @UseGuards(JwtAuthGuard)
    async deletePlant(@User() user,@Param('id', ParseIntPipe) id: number ) {
       console.log(user);
+
       return this.plantService.deletePlant(id, user);
    }
 }

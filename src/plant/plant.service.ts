@@ -7,13 +7,14 @@ import { UserRoleEnum } from 'src/enum/userRole.Enum';
 import { Repository } from 'typeorm';
 import { addPlantDto } from './dto/addPlant.dto';
 import { Plant } from './entity/plant.entity';
+import { ClientService } from "../client/client.service"
 
 @Injectable()
 export class PlantService {
     constructor(
         @InjectRepository(Plant)
         private plantRepository: Repository<Plant>) { }
-
+    private
     // async getAllPlantsbySeller(user: Client): Promise<Plant[]> {
     //     return await this.plantRepository.find(
     //         {
@@ -40,8 +41,13 @@ export class PlantService {
 
     async getById(id: number, user: Client) {
         const plant = this.plantRepository.findOne(
-            { where: { id: id } }
+            {
+                where: { id: id, }, relations: {
+                    client: true,
+                }
+            }
         );
+        console.log(await (plant));
         if (!plant)
             throw new NotFoundException();
         if (user.role === UserRoleEnum.Admin || user.role === UserRoleEnum.Buyer ||
@@ -55,6 +61,7 @@ export class PlantService {
 
     async addPlant(plant: addPlantDto, user: Client): Promise<Plant> {
         if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Seller)) {
+
             const newPlant = this.plantRepository.create(plant);
             if (user.role === UserRoleEnum.Seller) newPlant.client=user;
             return await this.plantRepository.save(newPlant);
@@ -83,7 +90,9 @@ export class PlantService {
     async deletePlant(id: number, user: Client) {
         console.log("this is user " +user)
         const toDelete = await this.plantRepository.findOne({
-            where: { id: id },
+            where: { id: id }, relations: {
+                client: true,
+            }
         });
         const client =toDelete.client;
         if (!toDelete) {

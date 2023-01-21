@@ -13,7 +13,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     OrderModule,
     FavorisModule,
     ClientModule,
-
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: '127.0.0.1',
