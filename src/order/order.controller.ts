@@ -27,15 +27,15 @@ export class OrderController {
     //   return await this.orderService.getOrderBySeller(user);
     // }
   
-    @Post('add/:addOrderDto')
+    @Post('add')
     @UseGuards(JwtAuthGuard)
-    async addOrder(@Param()addOrderDto:addOrderDto,@User() user): Promise<Order> {
+    async addOrder(@Body()addOrderDto:addOrderDto,@User() user): Promise<Order> {
       return await this.orderService.addOrder(addOrderDto,user);
 
     }
   
     @Delete(':id')
-     @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     async deleteOrder(@Param('id', ParseIntPipe) id: number,@User() user) {
       return this.orderService.deleteOrder(id,user);
     }

@@ -17,9 +17,10 @@ export class PlantService {
    
     async getAllPlants(user): Promise<Plant[]> {
         if (user.role === UserRoleEnum.Buyer || user.role === UserRoleEnum.Admin) 
-        { return await this.plantRepository.find(); }
+        { return await this.plantRepository.find({relations: {
+            client: true,
+        }}); }
         else {
-           
             return await this.plantRepository.find(
                 {
                    where: { 

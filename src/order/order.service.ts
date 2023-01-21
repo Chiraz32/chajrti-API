@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { use } from 'passport';
 import { Client } from 'src/client/entity/client.entity';
 import { OrderStateEnum } from 'src/enum/orderState.enum';
 import { UserRoleEnum } from 'src/enum/userRole.Enum';
@@ -18,8 +19,8 @@ export class OrderService {
     private OrderRepository: Repository<Order>,
     @InjectRepository(Plant)
     private PlantRepository: Repository<Plant>,
-  ) { 
-    this.plantService= new PlantService(PlantRepository);
+  ) {
+    this.plantService = new PlantService(PlantRepository);
   }
 
   async getOrders(user): Promise<Order[]> {
@@ -31,37 +32,48 @@ export class OrderService {
           client: true,
         },
       });
+    } else if (user.role === UserRoleEnum.Buyer) {
+      return await this.OrderRepository.find({
+        where: {
+          client: true
+        },
+        relations: {
+          plant: true,
+          client: true,
+        },
+      });
     }
-//    it's not working
     else {
-      let plants = await this.plantService.getAllPlants(user);
-      var orders= [];
-      for (const plant of plants)
-       { orders.push( await
-        this.OrderRepository.createQueryBuilder('order')
-        .where('order.plant = :plant', { plant}).getCount()
-
-        // await this.OrderRepository.findOneOrFail(
-        //     {where : { plant :plant },
-        // relations:{
-        //     client :true,
-        //     plant:true,
-        // }},
-            
-        
-       
-        )
-
-
+      var allOrders = await this.OrderRepository.find({
+        relations: {
+          plant: true,
+          client: true,
+        },
+      });;
+      var orders = [];
+      for(const order of allOrders){
+        var orderedPlant = await this.plantService.getById(order.plant.id,user);
+        if (orderedPlant.client.id === user.id){
+          orders.push(order)
+        }
       }
       
-      console.log(orders);
-      return orders ;
+      // this.OrderRepository.createQueryBuilder('order')
+      //   .where('plant = :plant', { plant }).getCount())
+
+      // await this.OrderRepository.findOneOrFail(
+      //     {where : { plant :plant },
+      // relations:{
+      //     client :true,
+      //     plant:true,
+      // }},
     }
+    return orders;
   }
-  
+
   async addOrder(Order: addOrderDto, user: Client): Promise<Order> {
-    if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Buyer )) {
+    if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Buyer)) {
+      Order.state = OrderStateEnum.PENDING;
       const newOrder = this.OrderRepository.create(Order);
       await this.OrderRepository.save(newOrder);
       return newOrder;
@@ -74,6 +86,9 @@ export class OrderService {
   async deleteOrder(id: number, user: Client) {
     const toDelete = await this.OrderRepository.findOne({
       where: { id: id },
+      relations: {
+        client: true,
+      },
     });
     if (!toDelete) {
       throw new NotFoundException(`This order doesn't exist`);
@@ -91,10 +106,10 @@ export class OrderService {
       where: { id: id },
       relations: {
         client: true,
-        plant: true,
       },
     });
-    if (user.role === UserRoleEnum.Admin || user.role === UserRoleEnum.Seller && order.plant.client.id === user.id) {
+    const plant = this.plantService.getById(order.plant.id, user);
+    if (user.role === UserRoleEnum.Admin || user.role === UserRoleEnum.Seller && (await plant).client.id === user.id) {
       order.state = OrderStateEnum.ACCEPTED;
       this.OrderRepository.save(order);
       return order;
@@ -108,11 +123,10 @@ export class OrderService {
       where: { id: id },
       relations: {
         client: true,
-        plant: true,
       },
     });
-
-    if (user.role === UserRoleEnum.Admin || user.role === UserRoleEnum.Seller && order.plant.client.id === user.id) {
+    const plant = this.plantService.getById(order.plant.id, user);
+    if (user.role === UserRoleEnum.Admin || user.role === UserRoleEnum.Seller && (await plant).client.id === user.id) {
       order.state = OrderStateEnum.REFUSED;
       this.OrderRepository.save(order);
       return order;
