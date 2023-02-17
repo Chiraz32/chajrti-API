@@ -13,7 +13,6 @@ import { UserRoleEnum } from 'src/enum/userRole.Enum';
 
 @Injectable()
 export class ClientService {
-
     constructor(
         @InjectRepository(Client)
         private clientRepository: Repository<Client>,
