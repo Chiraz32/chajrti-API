@@ -70,7 +70,10 @@ export class ClientService {
             const payload = {
                 id: client.id,
                 name: client.name,
-                email: client.email
+                email: client.email,
+                image: client.image,
+                phone:client.phoneNumber,
+                role:client.role
             };
             const jwt = await this.jwtService.sign(payload);
             return {
