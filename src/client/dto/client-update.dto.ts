@@ -1,5 +1,5 @@
 import { Optional } from '@nestjs/common';
-import {IsEmail, IsNotEmpty} from 'class-validator';
+import {IsEmail} from 'class-validator';
 
 export class ClientUpdateDto{
 
@@ -11,7 +11,7 @@ export class ClientUpdateDto{
     email: string;
 
     @Optional()
-    phoneNumber : number;
+    phoneNumber : string;
 
     @Optional()
     image : string;

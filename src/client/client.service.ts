@@ -52,7 +52,8 @@ export class ClientService {
         return {
             id: client.id,
             name: client.name,
-            email: client.email
+            email: client.email,
+            phoneNumber : client.phoneNumber
         };
     }
 
@@ -86,13 +87,15 @@ export class ClientService {
         if(user.role === UserRoleEnum.Admin || user.id == id){
             const newClient = await this.clientRepository.preload({
                 id, ...clientData
-            })
+            });
             if (!newClient) {
                 throw new NotFoundException(`client ${id} n'existe pas`);
             }
+            newClient.phoneNumber = clientData.phoneNumber;
+            console.log(newClient);
             return await this.clientRepository.save(newClient);
         }else{
-            throw new UnauthorizedException(`You can't update those infos`)
+            throw new UnauthorizedException(`You can't update those infos`);
         }
         
     }

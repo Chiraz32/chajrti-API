@@ -9,7 +9,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { userInfo } from 'os';
 import { User } from 'src/decorators/client.decorator';
 import { ClientService } from './client.service';
 import { ClientInscritDto } from './dto/client-inscrit.dto';

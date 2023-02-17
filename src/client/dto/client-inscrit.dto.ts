@@ -11,4 +11,7 @@ export class ClientInscritDto{
     
     @IsNotEmpty()
     mdp: string;
+
+    @IsNotEmpty()
+    phoneNumber : string;
 }

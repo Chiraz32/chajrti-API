@@ -32,7 +32,7 @@ export class Client {
   })
   image: string;
   @Column({})
-  phoneNumber: number;
+  phoneNumber: string;
 
   @Column({
     type: 'enum',
@@ -40,6 +40,7 @@ export class Client {
     default: UserRoleEnum.Buyer,
   })
   role: string;
+  
   @OneToMany((type) => Order, (Order) => Order.client, { cascade: true })
   orders: Order[];
 
