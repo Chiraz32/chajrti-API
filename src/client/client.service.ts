@@ -91,8 +91,6 @@ export class ClientService {
             if (!newClient) {
                 throw new NotFoundException(`client ${id} n'existe pas`);
             }
-            newClient.phoneNumber = clientData.phoneNumber;
-            console.log(newClient);
             return await this.clientRepository.save(newClient);
         }else{
             throw new UnauthorizedException(`You can't update those infos`);
