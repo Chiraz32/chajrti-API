@@ -7,6 +7,7 @@ import { Plant } from './entity/plant.entity';
 import { PlantController } from './plant.controller';
 import { PlantService } from './plant.service';
 import { diskStorage } from 'multer';
+import { JwtStrategy } from 'src/client/strategy/passport-jwt.strategy';
 @Global()
 @Module({
   imports: [TypeOrmModule.forFeature([Plant]),

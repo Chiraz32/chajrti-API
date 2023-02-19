@@ -27,12 +27,10 @@ export class Plant {
 
 
   @OneToMany((type) => Favoris, (Favoris) => Favoris.plant)
-
   @OneToMany((type) => Favoris, (Favoris) => Favoris.plant,{cascade:true})
   favoris: Favoris[];
   @OneToMany((type) => Order, (Order) => Order.plant,{cascade:true})
   orders: Order[];
- 
   @ManyToOne((type)=>Client,client=> client.plants)
   client : Client;
  

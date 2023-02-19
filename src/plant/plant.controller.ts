@@ -5,6 +5,7 @@ import { Client } from 'src/client/entity/client.entity';
 import { JwtAuthGuard } from 'src/client/Guards/jwt-auth.guard';
 import { User } from 'src/decorators/client.decorator';
 import { addPlantDto } from './dto/addPlant.dto';
+import { PlantUpdateDto } from './dto/plant.update';
 import { Plant } from './entity/plant.entity';
 import { PlantService } from './plant.service';
 
@@ -39,6 +40,7 @@ export class PlantController {
       await this.plantService.addPlant(plant, user);
    }
 
+   
    @Patch('upload/:id')
    @UseGuards(JwtAuthGuard)
    @UseInterceptors(FileInterceptor('file'))
@@ -46,13 +48,20 @@ export class PlantController {
       @User() user:Client,
       @UploadedFile() file: Express.Multer.File,
       @Param('id', ParseIntPipe) id: number,
-   
    ) {
-      const newuser= user;
-      console.log(newuser)
       const image = file.originalname;
-      await this.plantService.addImage(id, image, newuser);
+      await this.plantService.addImage(id, image, user);
    }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('update/:id')
+  async update(
+    @Body() plant: PlantUpdateDto,
+    @User() user,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return await this.plantService.update(id, plant, user);
+  }
 
    @Delete('delete/:id')
    @UseGuards(JwtAuthGuard)

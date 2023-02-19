@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { addPlantDto } from './dto/addPlant.dto';
 import { Plant } from './entity/plant.entity';
 import { ClientService } from "../client/client.service"
+import { PlantUpdateDto } from './dto/plant.update';
 
 @Injectable()
 export class PlantService {
@@ -81,6 +82,23 @@ export class PlantService {
         else {
             throw new UnauthorizedException();
         }
+    }
+
+    async update(id: number, plant: PlantUpdateDto, user : Client): Promise<Partial<Client>> {
+        if(user.role === UserRoleEnum.Admin || user.id == id){
+            console.log(plant)
+            const newPlant = await this.plantRepository.preload({
+                id, ...plant
+            })
+            if (!newPlant) {
+                throw new NotFoundException(`plante ${id} n'existe pas`);
+            }
+            console.log(newPlant);
+            return await this.plantRepository.save(newPlant);
+        }else{
+            throw new UnauthorizedException(`You can't update those infos`)
+        }
+        
     }
 
     async deletePlant(id: number, user) {
