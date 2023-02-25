@@ -10,31 +10,25 @@ export class OrderController {
     
     constructor(private orderService: OrderService) {}
 
-    // @Get('allByClient')
-    // @UseGuards(JwtAuthGuard)
-    // async getOrderByClient(@User()user): Promise<Order[]> {
-    //   return await this.orderService.getOrderByClient(user);
-    // }
+    
     @Get('all')
     @UseGuards(JwtAuthGuard)
     async getOrders(@User() user): Promise<Order[]> 
     {
       return await this.orderService.getOrders(user);
     }
-    // @Get('allBySeller')
-    // @UseGuards(JwtAuthGuard)
-    // async getOrderBySeller(@User() user): Promise<Order[]> {
-    //   return await this.orderService.getOrderBySeller(user);
-    // }
+   
   
     @Post('add')
     @UseGuards(JwtAuthGuard)
-    async addOrder(@Body()addOrderDto:addOrderDto,@User() user): Promise<Order> {
-      return await this.orderService.addOrder(addOrderDto,user);
+    async addOrder(@Body()addOrderDto:addOrderDto,
+    @User() user): Promise<Order> {
+      return await this.orderService.
+      addOrder(addOrderDto,user);
 
     }
   
-    @Delete(':id')
+    @Delete('delete/:id')
     @UseGuards(JwtAuthGuard)
     async deleteOrder(@Param('id', ParseIntPipe) id: number,@User() user) {
       return this.orderService.deleteOrder(id,user);

@@ -39,13 +39,15 @@ export class FavorisService {
     }
   }
 
-  async addFavoris(favoris: addFavorisDto, user): Promise<Favoris> {
+  async addFavoris(favoris: addFavorisDto, user): 
+  Promise<Favoris> {
     if (
       (user.role === UserRoleEnum.Buyer ) ||
       user.role === UserRoleEnum.Admin
     ) {
       const newFavoris = this.favorisRepository.create(favoris);
-    
+      newFavoris.client=user;
+      console.log(newFavoris);
       return await this.favorisRepository.save(newFavoris);
        
     } else {
@@ -57,10 +59,10 @@ export class FavorisService {
     const toDelete = await this.favorisRepository.findOne({
       where: { id: id },
       relations: {
-        plant: true,
         client: true,
       },
     });
+    console.log(toDelete);
     if (!toDelete) {
       throw new NotFoundException(`This favoris doesn't exist`);
     } else {

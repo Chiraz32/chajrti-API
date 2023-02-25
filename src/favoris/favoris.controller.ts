@@ -34,7 +34,7 @@ export class FavorisController {
     return await this.favorisService.addFavoris(favoris, user);
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   @UseGuards(JwtAuthGuard)
   async deleteFavoris(
     @Param('id', ParseIntPipe) id: number,

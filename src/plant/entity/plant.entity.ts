@@ -24,13 +24,14 @@ export class Plant {
   price: number;
   @Column()
   description: string;
+  @OneToMany((type) => Favoris, (Favoris) => 
+  Favoris.plant)
 
-
-  @OneToMany((type) => Favoris, (Favoris) => Favoris.plant)
-
-  @OneToMany((type) => Favoris, (Favoris) => Favoris.plant,{cascade:true})
+  @OneToMany((type) => Favoris, (Favoris) => 
+  Favoris.plant,{cascade:true})
   favoris: Favoris[];
-  @OneToMany((type) => Order, (Order) => Order.plant,{cascade:true})
+  @OneToMany((type) => Order, (Order) => 
+  Order.plant,{cascade:true})
   orders: Order[];
  
   @ManyToOne((type)=>Client,client=> client.plants)

@@ -15,24 +15,16 @@ import {
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
-
   @Column({
     type: 'enum',
     enum: OrderStateEnum,
-    default: OrderStateEnum.PENDING
-  })
+    default: OrderStateEnum.PENDING,})
   state: string;
 
-  @ManyToOne((type) => Client, (Client) => Client.orders, {
-    
-    // eager: true,
-  })
+  @ManyToOne((type) => Client, (Client) => Client.orders)
   client: Client;
-  
-  @ManyToOne((type) => Plant, (Plant) => Plant.orders, {
-     
-     eager: true,
-  })
+
+  @ManyToOne((type) => Plant, (Plant) => Plant.orders)
   @JoinTable()
   plant: Plant;
   newOrder: Promise<Plant>;

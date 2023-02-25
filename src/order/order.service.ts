@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { use } from 'passport';
 import { Client } from 'src/client/entity/client.entity';
@@ -9,7 +13,6 @@ import { Order } from 'src/order/entity/order.entity';
 import { Plant } from 'src/plant/entity/plant.entity';
 import { PlantService } from 'src/plant/plant.service';
 import { Repository } from 'typeorm';
-
 
 @Injectable()
 export class OrderService {
@@ -35,29 +38,31 @@ export class OrderService {
     } else if (user.role === UserRoleEnum.Buyer) {
       return await this.OrderRepository.find({
         where: {
-          client: true
+          client: true,
         },
         relations: {
           plant: true,
           client: true,
         },
       });
-    }
-    else {
+    } else {
       var allOrders = await this.OrderRepository.find({
         relations: {
           plant: true,
           client: true,
         },
-      });;
+      });
       var orders = [];
-      for(const order of allOrders){
-        var orderedPlant = await this.plantService.getById(order.plant.id,user);
-        if (orderedPlant.client.id === user.id){
-          orders.push(order)
+      for (const order of allOrders) {
+        var orderedPlant = await this.plantService.getById(
+          order.plant.id,
+          user,
+        );
+        if (orderedPlant.client.id === user.id) {
+          orders.push(order);
         }
       }
-      
+
       // this.OrderRepository.createQueryBuilder('order')
       //   .where('plant = :plant', { plant }).getCount())
 
@@ -71,19 +76,22 @@ export class OrderService {
     return orders;
   }
 
-  async addOrder(Order: addOrderDto, user: Client): Promise<Order> {
-    if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Buyer)) {
+  async addOrder(Order: addOrderDto, user): Promise<Order> {
+    if (user.role === UserRoleEnum.Admin || 
+      user.role === UserRoleEnum.Buyer) {
       Order.state = OrderStateEnum.PENDING;
       const newOrder = this.OrderRepository.create(Order);
+      if (user.role === UserRoleEnum.Buyer)
+       newOrder.client = user;
       await this.OrderRepository.save(newOrder);
+      console.log(newOrder);
       return newOrder;
-    }
-    else {
+    } else {
       throw new UnauthorizedException();
     }
   }
 
-  async deleteOrder(id: number, user: Client) {
+  async deleteOrder(id: number, user) {
     const toDelete = await this.OrderRepository.findOne({
       where: { id: id },
       relations: {
@@ -92,24 +100,32 @@ export class OrderService {
     });
     if (!toDelete) {
       throw new NotFoundException(`This order doesn't exist`);
-    }
-    else if (user.role === UserRoleEnum.Admin || (user.role === UserRoleEnum.Buyer && (toDelete.client.id === user.id))) {
+    } else if (
+      user.role === UserRoleEnum.Admin ||
+      (user.role === UserRoleEnum.Buyer && toDelete.client.id === user.id)||
+      (user.role === UserRoleEnum.Seller && toDelete.plant.client.id === user.id)
+    ) {
       return await this.OrderRepository.delete(id);
     } else {
       throw new UnauthorizedException();
     }
-
-
   }
   async acceptOrder(id: number, user: Client): Promise<Order> {
     const order = await this.OrderRepository.findOne({
       where: { id: id },
       relations: {
         client: true,
-      },
-    });
+        plant: true,
+      },});
+   
+    console.log("order value is " + order.toString());
     const plant = this.plantService.getById(order.plant.id, user);
-    if (user.role === UserRoleEnum.Admin || user.role === UserRoleEnum.Seller && (await plant).client.id === user.id) {
+    console.log(plant);
+    if (
+      user.role === UserRoleEnum.Admin ||
+      (user.role === UserRoleEnum.Seller &&
+         (await plant).client.id === user.id)
+    ) {
       order.state = OrderStateEnum.ACCEPTED;
       this.OrderRepository.save(order);
       return order;
@@ -123,10 +139,18 @@ export class OrderService {
       where: { id: id },
       relations: {
         client: true,
+        plant:true,
       },
     });
+    
+    console.log("order value is " + order.toString());
     const plant = this.plantService.getById(order.plant.id, user);
-    if (user.role === UserRoleEnum.Admin || user.role === UserRoleEnum.Seller && (await plant).client.id === user.id) {
+    console.log("plant is "+ plant);
+    if (
+      user.role === UserRoleEnum.Admin ||
+      (user.role === UserRoleEnum.Seller && 
+        (await plant).client.id === user.id)
+    ) {
       order.state = OrderStateEnum.REFUSED;
       this.OrderRepository.save(order);
       return order;

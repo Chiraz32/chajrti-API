@@ -13,16 +13,8 @@ export class Favoris {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => Client, (Client) => Client.favoris, {
-   
-    // nullable: true,
-    eager: true,
-  })
+  @ManyToOne((type) => Client, (Client) => Client.favoris, {})
   client: Client;
-  @ManyToOne((type) => Plant, (Plant) => Plant.favoris, {
-   
-    // nullable:true,
-    eager: true,
-  })
+  @ManyToOne((type) => Plant, (Plant) => Plant.favoris, {})
   plant: Plant;
 }

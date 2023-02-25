@@ -1,5 +1,5 @@
 export enum OrderStateEnum {
-    PENDING = 'en attente',
-    ACCEPTED = 'acceptée',
-    REFUSED = "refusée"
-  }
+  PENDING = 'Pending',
+  ACCEPTED = 'accepted',
+  REFUSED = 'refused',
+}
