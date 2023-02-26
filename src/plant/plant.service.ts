@@ -36,6 +36,7 @@ export class PlantService {
     }
   
     async getById(id: number, user: Client) {
+        console.log("on est dans getbyid "+id+" "+user.id)
         const plant = this.plantRepository.findOne(
             {
                 where: { id: id, }, relations: {
@@ -85,11 +86,15 @@ export class PlantService {
     }
 
     async update(id: number, plant: PlantUpdateDto, user : Client): Promise<Partial<Client>> {
-        if(user.role === UserRoleEnum.Admin || user.id == id){
-            console.log(plant)
+        console.log("role "+user.role+"id "+user.id)
+        const p=this.getById(id, user)
+        console.log("plant price"+(await p).price)
+        if(user.role === UserRoleEnum.Admin || user.id == (await p).client.id){
+            console.log("plant price"+(await p).price)
             const newPlant = await this.plantRepository.preload({
                 id, ...plant
             })
+            console.log(newPlant)
             if (!newPlant) {
                 throw new NotFoundException(`plante ${id} n'existe pas`);
             }
@@ -97,7 +102,7 @@ export class PlantService {
             return await this.plantRepository.save(newPlant);
         }else{
             throw new UnauthorizedException(`You can't update those infos`)
-        }
+        } 
         
     }
 
